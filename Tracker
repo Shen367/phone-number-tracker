@@ -1,0 +1,73 @@
+import phonenumbers
+from phonenumbers import carrier, geocoder, timezone, PhoneNumberType
+
+# Fungsi untuk mendapatkan tipe nomor telepon
+def get_number_type(number):
+    number_type = phonenumbers.number_type(number)
+    if number_type == PhoneNumberType.MOBILE:
+        return "Mobile"
+    elif number_type == PhoneNumberType.FIXED_LINE:
+        return "Fixed Line"
+    elif number_type == PhoneNumberType.FIXED_LINE_OR_MOBILE:
+        return "Fixed Line or Mobile"
+    elif number_type == PhoneNumberType.TOLL_FREE:
+        return "Toll Free"
+    elif number_type == PhoneNumberType.PREMIUM_RATE:
+        return "Premium Rate"
+    elif number_type == PhoneNumberType.VOIP:
+        return "VoIP"
+    elif number_type == PhoneNumberType.SHARED_COST:
+        return "Shared Cost"
+    else:
+        return "Unknown Type"
+
+try:
+    mobileNo = input("Masukkan nomor telepon (misal: +62822...): ")
+    mobileNo = phonenumbers.parse(mobileNo, "ID")  # Tambahkan region default "ID" untuk Indonesia
+
+    # Mendapatkan lokasi (timezone)
+    timezones = timezone.time_zones_for_number(mobileNo)
+    print("Timezone :", timezones)
+
+    # Mendapatkan provider (kartu SIM yang digunakan)
+    provider = carrier.name_for_number(mobileNo, "en")
+    print("Operator :", provider)
+
+    # Mendapatkan negara/region
+    region = geocoder.description_for_number(mobileNo, "en")
+    print("Location :", region)
+
+    # Validasi nomor telepon
+    is_valid = phonenumbers.is_valid_number(mobileNo)
+    print("Valid Number :", is_valid)
+
+    # Cek kemungkinan validitas nomor
+    is_possible = phonenumbers.is_possible_number(mobileNo)
+    print("Possible Number :", is_possible)
+
+    # Mendapatkan format internasional
+    international_format = phonenumbers.format_number(mobileNo, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+    print("International Format :", international_format)
+
+    # Mendapatkan format mobile
+    mobile_format = phonenumbers.format_number(mobileNo, phonenumbers.PhoneNumberFormat.NATIONAL)
+    print("Mobile Format :", mobile_format)
+
+    # Mendapatkan format E.164
+    e164_format = phonenumbers.format_number(mobileNo, phonenumbers.PhoneNumberFormat.E164)
+    print("E.164 Format :", e164_format)
+
+    # Mendapatkan kode negara
+    country_code = mobileNo.country_code
+    print("Country Code :", country_code)
+
+    # Mendapatkan local number
+    local_number = mobileNo.national_number
+    print("Local Number :", local_number)
+
+    # Mendapatkan type nomor
+    number_type = get_number_type(mobileNo)
+    print("Type :", number_type)
+
+except phonenumbers.NumberParseException as e:
+    print(f"Error parsing number: {e}")
